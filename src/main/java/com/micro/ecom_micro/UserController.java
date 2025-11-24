@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -21,26 +22,26 @@ public class UserController {
 //        this.userService = userService;
 //    }
 
-    //@GetMapping("/api/users")
+    @GetMapping
     //@RequestMapping(value ="/api/users", method = RequestMethod.GET)
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(userService.fetchAllUsers(), HttpStatus.OK);
     }
 
-    @GetMapping("/api/users/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         return userService.fetchUser(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
         }
 
-    @PostMapping("/api/users")
+    @PostMapping
     public ResponseEntity<String> createUser(@RequestBody User user) {
         userService.addUser(user);
         return ResponseEntity.ok("User Added");
     }
 
-    @PutMapping("/api/users/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<String> updateUser(@RequestBody User updatedUser,
                                              @PathVariable Long id) {
         boolean updated = userService.updateUser(id, updatedUser);
