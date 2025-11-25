@@ -1,5 +1,6 @@
-package com.micro.ecom_micro;
+package com.micro.ecom_micro.services;
 
+import com.micro.ecom_micro.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.micro.ecom_micro;
+package com.micro.ecom_micro.models;
 
 import lombok.Data;
 
