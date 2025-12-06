@@ -1,0 +1,34 @@
+package com.micro.ecom_micro.controllers;
+
+import com.micro.ecom_micro.dto.CartItemRequest;
+import com.micro.ecom_micro.repository.CartItemRepository;
+import com.micro.ecom_micro.services.CartService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/cart")
+@RequiredArgsConstructor
+public class CartController {
+
+    @Autowired
+    private CartItemRepository cartItemRepository;
+
+    private final CartService cartService;
+
+    @PostMapping
+    public ResponseEntity<String> addToCartItem(
+            @RequestHeader("X-User_Id") String userId,
+            @RequestBody CartItemRequest request) {
+
+        if (!cartService.addToCart(userId, request)) {
+            return ResponseEntity.badRequest()
+                    .body("Product out of Stock or Product not found or User not found");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+}
