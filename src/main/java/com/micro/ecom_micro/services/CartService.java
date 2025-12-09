@@ -7,14 +7,17 @@ import com.micro.ecom_micro.models.User;
 import com.micro.ecom_micro.repository.CartItemRepository;
 import com.micro.ecom_micro.repository.ProductRepository;
 import com.micro.ecom_micro.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CartService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
@@ -29,11 +32,11 @@ public class CartService {
            if (product.getQuantity() < request.getQuantity())
                return false;
 
-               Optional<User> UserOpt = userRepository.findById(Long.valueOf(userId));
-               if (UserOpt.isEmpty())
+               Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
+               if (userOpt.isEmpty())
                    return false;
 
-                   User user = UserOpt.get();
+                   User user = userOpt.get();
 
                    CartItem existingCartItem = cartItemRepository.findByUserAndProduct(user, product);
                    if (existingCartItem != null) {
@@ -50,5 +53,23 @@ public class CartService {
                    }
                    return  true;
                }
-           }
+
+    public boolean deleteItemFromCart(String userId, Long productId) {
+        Optional<Product> productOpt = productRepository.findById(productId);
+        Optional<User> userOpt = userRepository.findById(Long.valueOf(userId));
+
+        if (productOpt.isPresent() && userOpt.isPresent()) {
+            cartItemRepository.deleteByUserAndProduct(userOpt.get(), productOpt.get());
+            return  true;
+        }
+
+        return false;
+    }
+
+    public List<CartItem> getCartItems(String userId) {
+        return userRepository.findById(Long.valueOf(userId))
+                .map(cartItemRepository::findByUser)
+                .orElseGet(List::of);
+    }
+}
 
